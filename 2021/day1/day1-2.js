@@ -1,10 +1,9 @@
 "use strict";
 var fs = require('fs');
-function cl (txt) {
-    // This is annoying to write out all the time soooo...
-    console.log(txt);
-    return txt; // Allows chaining.
-}
+var tools = require('../../tools.js');
+const cl = tools.cl;
+
+cl('AoC: Day 1 (2/2)');
 
 function get_window_sums(data, window_offset=2) {
     let sums = [];

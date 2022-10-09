@@ -1,12 +1,9 @@
 "use strict";
 var fs = require('fs');
-function cl (txt) {
-    // This is annoying to write out all the time soooo...
-    console.log(txt);
-    return txt; // Allows chaining.
-}
+var tools = require('../../tools.js');
+const cl = tools.cl;
 
-
+cl('AoC: Day 1 (1/2)');
 
 // Reading from a text file (plain readFile() requires callback to use data.)
 let data = fs.readFileSync('day1_input.txt').toString().split("\n");

@@ -31,7 +31,7 @@ if (diagnostics) {
             return 1;
         }
         return 0;
-    })
+    });
 
     let epsilon_rate = gamma_rate.map( bit => {
         if (bit === 1) {

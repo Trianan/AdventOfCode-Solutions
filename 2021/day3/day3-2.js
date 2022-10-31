@@ -3,9 +3,7 @@ var fs = require('fs');
 var tools = require('../../tools.js');
 const cl = tools.cl;
 const ansi = tools.ansi_codes;
-cl(`
-    \t\t\tAoC: Day 3 (2/2)
-    `,
+cl(`\t\t\tAoC: Day 3 (2/2)`,
     ansi.bg.blue,
     ansi.fg.cyan
 );

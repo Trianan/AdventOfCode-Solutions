@@ -18,35 +18,51 @@ function remove_falsy(array) {
 class Board {
     constructor(array_2d) {
         this.grid = array_2d;
+        this.marked_indices = [];
     }
-    mark_board(call) {
+    check_board(call) {
         for (let row = 0; row < this.grid.length; ++row) {
             for (let column = 0; column < this.grid[row].length; ++column) {
+                // Spot matches call? Mark it and save coordinates.
                 if (this.grid[row][column] === call) {
                     this.grid[row][column] = call.toString(10);
+                    this.marked_indices.push([row, column]);
+
+                    // Checks if winner only if a marked position is
+                    // found to cut down on number of is_winner() calls.
+                    if (this.is_winner()) {
+                        return true;
+                    }
                 }
             }
         }
-        return;
+        return false;
     }
     is_winner() {
-        // Check if all elements in row/column are strings.
-        // Return true if that's the case.
+        // Tallies the number of marked positions for each row and column
+        // position.
+        let tallies = [
+            new Array(this.grid.length).forEach(i => i=0), // rows
+            new Array(this.grid[0].length).forEach(i => i=0) // columns
+        ];
 
-        return false;
+        
+
     }
 }
 
 class Game {
-    constructor(raw_data){
+    constructor(raw_data) {
         // Data parsed, cleaned, calls and boards are separated
         // and stored as member arrays.
         raw_data = raw_data.split('\r\n');
+
         this.calls = raw_data.shift().split(',').map( 
             call => {
                 return Number.parseInt(call);
             }
         );
+
         let clean_rows = remove_falsy(raw_data).map(
             element => remove_falsy(element.split(' ')).map(n => {
                     return Number.parseInt(n);
@@ -64,28 +80,38 @@ class Game {
         }
     }
     play_round() {
-        // Gets next call, marks all matching spots on boards,
-        // then checks if each board is a winner.
-        const current_call = this.calls.shift();
-        cl(`Current call: ${current_call}`, ansi.fg.cyan);
+        // Uses the next call to mark spots and check for winners.
+        // The first winning board and winning call is returned.
+        const call = this.calls.shift();
+        cl(`Current call: ${call}`, ansi.fg.cyan);
+
         for (let board of this.boards) {
-            board.mark_board(current_call);
-            if (board.is_winner()) {
-                cl(`Winning call: ${current_call}`, ansi.fg.green);
-                return board;
+            if (board.check_board(call)) {
+                cl(`Winning call: ${call}`, ansi.fg.green);
+                return [board, call];
             }
         }
+        // There is no winning board, return nothing.
         return null;
     }
     play_game() {
+        // No winning board yet...
         let winning_board = null;
         while (!winning_board) {
             winning_board = this.play_round();
+            // Winning board is returned; calculate score, then
+            // end the game.
+
+
+
         }
     }
     calculate_score(winning_call) {
         // Sums unmarked numbers on winning board, then multiplies the sum
         // by the winning call.
+
+
+
         return;
     }
 }

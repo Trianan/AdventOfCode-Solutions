@@ -106,29 +106,51 @@ class Game {
         // Uses the next call to mark spots and check for winners.
         // The first winning board and winning call is returned.
         const call = this.calls.shift();
-        cl(`Current call: ${call}`, ansi.fg.cyan);
+        cl(`
+            Current call: ${call}
+            Remaining calls: ${this.calls.length}`,
+            ansi.fg.cyan
+        );
 
+
+        let winning_data = [];
         for (let board of this.boards) {
             if (board.check_board(call)) {
                 // Winning board; return it and the winning call!
-                return [board, call];
+                winning_data.push([board, call]);
             }
         }
-        // There is no winning board, return nothing.
-        return null;
+        return winning_data;
     }
     play_game() {
         // No winning board yet...
-        let winning_data = null;
-        while (!winning_data) {
-            winning_data = this.play_round();
+        let last_winners;
+        cl(`
+            # of boards: ${this.boards.length}
+            # of calls:  ${this.calls.length}`,
+            ansi.fg.green);
+
+        while (this.calls.length > 0) {
+            let winners = this.play_round();
+            if (winners.length > 0) {
+                last_winners = winners;
+                for (const win of last_winners) {
+                    cl(`Winning board found (winning call: ${win[1]})`,
+                        ansi.fg.yellow
+                    );
+                    cl(win[0]);
+                    this.boards = this.boards.filter( board => {
+                        const b = board.grid.toString();
+                        const wb = win[0].grid.toString();
+                        return b !== wb;
+                    });
+                    cl(`# remaining boards: ${this.boards.length}`,
+                        ansi.fg.yellow
+                    );
+                }
+            }
         }
-        cl('The winning board is...', ansi.fg.cyan);
-        cl(winning_data[0]);
-        cl(`The winning call was: ${winning_data[1]}
-            Score: ${winning_data[0].calculate_score(winning_data[1])}`,
-            ansi.fg.cyan
-        );
+        return last_winners;
     }
 
 }
@@ -143,24 +165,19 @@ class Game {
 let game_data = fs.readFileSync(
     'day4_input.txt').toString();
 if (game_data) {
-    cl("\n\t\t\tRAW GAME DATA:", ansi.fg.red);
-    cl(game_data, ansi.fg.red);
 
     let game = new Game(game_data);
-    cl("\n\t\t\tBINGO CALLS:", ansi.fg.yellow);
-    cl(game.calls);
-    cl("\n\t\t\tBOARDS:", ansi.fg.yellow);
-    game.boards.forEach( board => cl(board.grid));
-
-
-    cl("\t\t\tTEST", ansi.fg.cyan);
-    for (let i = 0; i < 4; ++i) {
-        game.play_round();
-    }
-    game.boards.forEach( board => cl(board.grid));
-
     cl("\n\n\n\t\t\tPLAY!\n\n", ansi.fg.magenta);
-    game.play_game();
+    const last_winner = game.play_game().pop();
+    cl(`The last winning board (winning call: ${last_winner[1]})`,
+            ansi.fg.green
+        );
+        cl(last_winner[0].grid);
+        cl(`
+            Score:
+            ${last_winner[0].calculate_score(last_winner[1])}`,
+            ansi.fg.green
+        );
 
     
 }

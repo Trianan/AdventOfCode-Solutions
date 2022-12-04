@@ -9,7 +9,7 @@ cl(`\t\t\tAoC: Day 5 (1/2)`,
 );
 //------------------------------------------------------------------------------
 
-
+ 
 
 
 
@@ -25,6 +25,10 @@ let cloud_coords = fs.readFileSync(
 if (cloud_coords) {
     // Parse and format data into array of arrays which each
     // contain the integer endpoints of a line segment.
+
+    // (This does not work correctly on Linux systems currently,
+    //  likely due to how different OSs handle newlines.)
+
     cl(`\n\t\t\tRAW CLOUD COORDINATES:`, ansi.fg.red);
     cl(cloud_coords, ansi.fg.red);
 
